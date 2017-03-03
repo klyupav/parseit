@@ -655,32 +655,6 @@ class ParseItHelpers
         return $matrix;
     }
 
-    public static function tableToMatrixNokogiri($nokogiri, $opts = [])
-    {
-        $trs = $nokogiri->get('tr', null)->toArray();
-        $matrix = [];
-        foreach ($trs as $rowId => $tr)
-        {
-            if (!$tr['td'] || !$tr['td'][0])
-            {
-                continue;
-            }
-            foreach ($tr['td'] as $colId => $td)
-            {
-                if ($opts['extended'])
-                {
-                    $matrix[$rowId][$colId]['value'] = $td['__ref']->textContent;
-                    $matrix[$rowId][$colId]['data'] = $td;
-                }
-                else
-                {
-                    $matrix[$rowId][$colId] = $td['__ref']->textContent;
-                }
-            }
-        }
-        return $matrix;
-    }
-
     public static function clearDomFromNonContentTags(&$dom)
     {
         $nonContentTags = ['style', 'script'];
@@ -747,29 +721,6 @@ class ParseItHelpers
         }
 
         return $innerHTML;
-    }
-
-    public static function nokogiriGetElementByXpath($content, $xpath)
-    {
-        $xpathsPArr = [];
-        $xpathsPArr[] = $xpath;
-        $xpathsPArr[] = str_replace('tbody/', '', $xpath);
-        $xpathsPArr = array_unique($xpathsPArr);
-        $nokogiri = new nokogiri($content);
-        foreach ($xpathsPArr as $xpathX)
-        {
-            if (!$els = $nokogiri->getElements($xpathX, null))
-            {
-                continue ;
-            }
-
-            $el = $els->toArray();
-            if (is_array($el) && (count($el) === 1))
-            {
-                break ;
-            }
-        }
-        return $el;
     }
 
     public static function repairJson($string)
