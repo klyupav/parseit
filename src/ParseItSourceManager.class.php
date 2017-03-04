@@ -37,7 +37,7 @@ class ParseItSourceManager
 
     private function initWithSource()
     {
-        
+
     }
 
     private function initWithUrl()
@@ -94,7 +94,7 @@ class ParseItSourceManager
             return;
         }
 
-      // die(htmlspecialchars($html));
+        // die(htmlspecialchars($html));
 
 
         $this->setHtml($html);
@@ -130,7 +130,7 @@ class ParseItSourceManager
     public static function load($url, $opt = [], $popitka = 0)
     {
         // use contentCache 
-        if ($opt['useContentCacheOnDate']) {
+        if (@$opt['useContentCacheOnDate']) {
             $cache = static::getContentCache($url, $opt, $opt['useContentCacheOnDate']);
             if ($cache != false) {
                 return $cache;
@@ -138,10 +138,10 @@ class ParseItSourceManager
         }
         $hostsByProxy = array('www.bn.ru');
 
-        if ($opt['sleep']) {
+        if (@$opt['sleep']) {
             sleep($opt['sleep']);
         }
-        if ($opt['PurgeURL']) {
+        if (@$opt['PurgeURL']) {
             exec('curl -X PURGE '.$url);
         }
 
@@ -149,7 +149,7 @@ class ParseItSourceManager
         $timeout = 10;
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        if ($opt['returnHeader']) {
+        if (@$opt['returnHeader']) {
             curl_setopt($ch, CURLOPT_HEADER, 1);
         }
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
@@ -162,71 +162,71 @@ class ParseItSourceManager
             'User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:16.0) Gecko/20100101 Firefox/16.0',
             'Accept-Encoding: gzip;q=0, compress;q=0',
         ];
-        $headersConfig = array_merge($defaultHeaders, (array) $opt['headers']);
+        $headersConfig = array_merge($defaultHeaders, (array) @$opt['headers']);
 
-        if ($opt['ajax']) {
+        if (@$opt['ajax']) {
             $headersConfig[] = 'X-Requested-With: XMLHttpRequest';
         }
 
-        if ($opt['referer']) {
+        if (@$opt['referer']) {
             $headersConfig[] = 'Referer: ' . $opt['referer'];
         }
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headersConfig);
 
         // CURLOPT_FAILONERROR default to true
-        curl_setopt($ch, CURLOPT_FAILONERROR, $opt['failOnError'] === false ? false : true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, @$opt['failOnError'] === false ? false : true);
 
-        if (empty($opt['no-follow'])) {
+        if (empty(@$opt['no-follow'])) {
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         }
-		//curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-		//curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        //curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 
         //curl_setopt($ch, CURLOPT_AUTOREFERER, true);
 
-        $timeout = $opt['timeout'] ?: 30;
+        $timeout = @$opt['timeout'] ?: 30;
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
 
-        if (!empty($opt['cookieFile'])) {
+        if (!empty(@$opt['cookieFile'])) {
             curl_setopt($ch, CURLOPT_COOKIEFILE, $opt['cookieFile']);
             curl_setopt($ch, CURLOPT_COOKIEJAR, $opt['cookieFile']);
         }
 
-        if (is_array($opt['cookie'])) {
+        if (is_array(@$opt['cookie'])) {
             foreach ($opt['cookie'] as $n => $v) {
                 $cookie .= $n . '=' . $v . '; ';
             }
         } else {
-            $cookie = $opt['cookie'];
+            $cookie = @$opt['cookie'];
         }
 
         //curl_setopt($ch, CURLOPT_COOKIE, $cookie);
 
         // basic authentication
-        if ($opt['auth']) {
-            curl_setopt($ch, CURLOPT_USERPWD, $opt['auth']);  
+        if (@$opt['auth']) {
+            curl_setopt($ch, CURLOPT_USERPWD, $opt['auth']);
         }
 
         // post data
-        if (is_array($opt['post'])) {
+        if (is_array(@$opt['post'])) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $opt['post']);
         }
 
         // post data
-        if (is_string($opt['post'])) {
+        if (is_string(@$opt['post'])) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $opt['post']);
         }
-/*
-        if (in_array(parse_url($url, PHP_URL_HOST), $hostsByProxy) || $opt['proxy']) {
-            if ($proxy = ProxyList::getLiveProxy()) {
-                curl_setopt($ch, CURLOPT_PROXY, $proxy['ip']);
-                curl_setopt($ch, CURLOPT_PROXYPORT, $proxy['port']);
-            }
-        }
-*/
-        if ($opt['proxy']) {
+        /*
+                if (in_array(parse_url($url, PHP_URL_HOST), $hostsByProxy) || $opt['proxy']) {
+                    if ($proxy = ProxyList::getLiveProxy()) {
+                        curl_setopt($ch, CURLOPT_PROXY, $proxy['ip']);
+                        curl_setopt($ch, CURLOPT_PROXYPORT, $proxy['port']);
+                    }
+                }
+        */
+        if (@$opt['proxy']) {
             $proxies = [
                 '178.57.68.212:8085',
                 '5.62.155.250:8085',
@@ -238,51 +238,51 @@ class ParseItSourceManager
             //curl_setopt($ch, CURLOPT_PROXYUSERPWD, 'MiniRUS218729:kYoj8PloCM');
             curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
-		curl_setopt($ch, CURLOPT_MAXREDIRS, 15);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 15);
 
         $data = curl_exec($ch);
         //print_r($data);die();
-		
-		$status = curl_getinfo($ch);
-        //print_r($status);
-		if($status['http_code']!=200){
-			if($status['http_code'] == 301 || $status['http_code'] == 302) {
-				//print_r($status);die();
-				if (isset($status['redirect_url'])) {
-					$data = ParseItSourceManager::load($status['redirect_url'], $opt);
-				}
-			}
-		}
-/*
-        $retries = $opt['retries'] ?: 3;
-        $retryDelay = $opt['retryDelay'] ?: 1;
-        while (!in_array(curl_errno($ch), [CURLE_OK, CURLE_HTTP_RETURNED_ERROR]) && $retries--) {
-            printf("Retry url '%s'\n", $url);
-            sleep($retryDelay);
 
-            if (in_array(parse_url($url, PHP_URL_HOST), $hostsByProxy) || $opt['proxy']) {
-                if ($proxy = ProxyList::getLiveProxy()) {
-                    curl_setopt($ch, CURLOPT_PROXY, $proxy['ip']);
-                    curl_setopt($ch, CURLOPT_PROXYPORT, $proxy['port']);
+        $status = curl_getinfo($ch);
+        //print_r($status);
+        if(@$status['http_code']!=200){
+            if($status['http_code'] == 301 || $status['http_code'] == 302) {
+                //print_r($status);die();
+                if (isset($status['redirect_url'])) {
+                    $data = ParseItSourceManager::load($status['redirect_url'], $opt);
                 }
             }
-
-            $data = curl_exec($ch);
         }
-*/
+        /*
+                $retries = $opt['retries'] ?: 3;
+                $retryDelay = $opt['retryDelay'] ?: 1;
+                while (!in_array(curl_errno($ch), [CURLE_OK, CURLE_HTTP_RETURNED_ERROR]) && $retries--) {
+                    printf("Retry url '%s'\n", $url);
+                    sleep($retryDelay);
+
+                    if (in_array(parse_url($url, PHP_URL_HOST), $hostsByProxy) || $opt['proxy']) {
+                        if ($proxy = ProxyList::getLiveProxy()) {
+                            curl_setopt($ch, CURLOPT_PROXY, $proxy['ip']);
+                            curl_setopt($ch, CURLOPT_PROXYPORT, $proxy['port']);
+                        }
+                    }
+
+                    $data = curl_exec($ch);
+                }
+        */
         curl_close($ch);
 
         // store ContentCache
 
-        if ($opt['saveContentCache']) {
+        if (@$opt['saveContentCache']) {
             static::saveContentCache($data, $url, $opt);
         }
 
-        if ($opt['json']) {
+        if (@$opt['json']) {
             $data = json_decode($data);
         }
 
-        if ( $opt['attempts'] > 0 ) {
+        if ( @$opt['attempts'] > 0 ) {
             if(!$data) {
                 if( $popitka === 10 ) {
                     return $data;
@@ -300,7 +300,7 @@ class ParseItSourceManager
         // get cookie
         $cookies = [];
         preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $header, $m);
-        
+
         foreach ($m[1] as $cookieStr)
         {
             parse_str($cookieStr, $cookiesTmp);
