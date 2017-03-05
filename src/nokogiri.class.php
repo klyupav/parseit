@@ -8,7 +8,8 @@
 */
 namespace ParseIt;
 
-class nokogiri implements IteratorAggregate{
+class nokogiri
+{
     protected $_source = '';
     /**
 * @var DOMDocument
