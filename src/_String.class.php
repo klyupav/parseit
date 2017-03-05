@@ -66,15 +66,21 @@ class _String {
 
     public static function parseNumber($str) {
         $str = _String::trim($str);
-        
+
         // в regexp два разных пробела
         if (!preg_match('#[0-9][0-9\,\.\ \ ]*#is', $str, $m)) {
             return false;
         }
 
-        //$v = str_replace([',', ' '], ['', ''], $m[0]);
-        $v = str_replace([',', ' '], ['.', ''], $m[0]);
-        
+        if ( preg_match('%\.%', $str) && preg_match('%\,%', $str) )
+        {
+            $v = str_replace([',', ''], ['', ''], $m[0]);
+        }
+        else
+        {
+            $v = str_replace([' ', ''], [',', '.'], $m[0]);
+        }
+
         return floatval($v);
     }
     
