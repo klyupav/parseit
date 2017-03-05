@@ -6,6 +6,8 @@
 * @deprecated
 * @see https://github.com/olamedia/nokogiri
 */
+namespace ParseIt;
+
 class nokogiri implements IteratorAggregate{
     protected $_source = '';
     /**
