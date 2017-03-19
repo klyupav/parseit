@@ -1,27 +1,27 @@
 <?php
 /**
-* Simple HTML parser
-*
-* @author olamedia <olamedia@gmail.com>
-* @deprecated
-* @see https://github.com/olamedia/nokogiri
-*/
+ * Simple HTML parser
+ *
+ * @author olamedia <olamedia@gmail.com>
+ * @deprecated
+ * @see https://github.com/olamedia/nokogiri
+ */
 namespace ParseIt;
 
 class nokogiri
 {
     protected $_source = '';
     /**
-* @var DOMDocument
-*/
+     * @var DOMDocument
+     */
     public $_dom = null;
     /**
-* @var DOMDocument
-*/
+     * @var DOMDocument
+     */
     protected $_tempDom = null;
     /**
-* @var DOMXpath
-* */
+     * @var DOMXpath
+     * */
     protected $_xpath = null;
     public function __construct($htmlString = ''){
         $this->loadHtml($htmlString);
@@ -40,7 +40,7 @@ class nokogiri
         $this->_dom = $dom;
     }
     public function loadHtml($htmlString = ''){
-        $dom = new DOMDocument('1.0', 'UTF-8');
+        $dom = new \DOMDocument('1.0', 'UTF-8');
         $dom->preserveWhiteSpace = false;
         if (strlen($htmlString)){
             libxml_use_internal_errors(TRUE);
@@ -58,21 +58,21 @@ class nokogiri
             foreach ($a as $k=>$sub){
                 $a[$k] = $this->getXpathSubquery($sub);
             }
-            
+
             return $this->getElements(implode('', $a),$relative);
         }
-        
+
         return $this->getElements($this->getXpathSubquery($expression), $relative);
     }
     protected function getNodes(){
 
     }
     public function getDom(){
-        if ($this->_dom instanceof DOMDocument){
+        if ($this->_dom instanceof \DOMDocument){
             return $this->_dom;
-        }elseif ($this->_dom instanceof DOMNodeList){
+        }elseif ($this->_dom instanceof \DOMNodeList){
             if ($this->_tempDom === null){
-                $this->_tempDom = new DOMDocument('1.0', 'UTF-8');
+                $this->_tempDom = new \DOMDocument('1.0', 'UTF-8');
                 $root = $this->_tempDom->createElement('root');
                 $this->_tempDom->appendChild($root);
                 foreach ($this->_dom as $domElement){
@@ -85,7 +85,7 @@ class nokogiri
     }
     public function getXpath(){
         if ($this->_xpath === null){
-           $this->_xpath = new DOMXpath($this->getDom());
+            $this->_xpath = new \DOMXpath($this->getDom());
         }
         return $this->_xpath;
     }
@@ -119,7 +119,7 @@ class nokogiri
         if (strlen($xpathQuery)){
             $nodeList = $this->getXpath()->query($xpathQuery, $relative);
             if ($nodeList === false){
-                throw new Exception('Malformed xpath');
+                throw new \Exception('Malformed xpath');
             }
             return self::fromDom($nodeList);
         }
@@ -130,7 +130,7 @@ class nokogiri
     public function toArray($xnode = null){
         $array = array();
         if ($xnode === null){
-            if ($this->_dom instanceof DOMNodeList){
+            if ($this->_dom instanceof \DOMNodeList){
                 foreach ($this->_dom as $node){
                     $array[] = $this->toArray($node);
                 }
@@ -165,6 +165,6 @@ class nokogiri
     }
     public function getIterator(){
         $a = $this->toArray();
-        return new ArrayIterator($a);
+        return new \ArrayIterator($a);
     }
 }

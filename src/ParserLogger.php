@@ -18,7 +18,7 @@ class ParserLogger
         // create a log channel
         $log = new Logger('ParseIt');
         $today = date('Y-m-d');
-        $log->pushHandler(new StreamHandler( "/logs/{$today}.log"));
+        $log->pushHandler(new StreamHandler( __DIR__."/../../../../logs/{$today}.log"));
         switch ( $level )
         {
             case 'info':
