@@ -11,7 +11,7 @@ Class simpleParser
 
     function __construct()
     {
-        $this->cookieFile = 'cookie-'.get_class($this).'.txt';
+        $this->cookieFile = 'cookie-'.class_basename(get_class($this)).'.txt';
         $this->project = str_replace('https://', '', trim('/', $this->project) );
         $this->project = str_replace('http://', '', trim('/', $this->project) );
     }
