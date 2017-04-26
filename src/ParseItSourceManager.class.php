@@ -227,15 +227,11 @@ class ParseItSourceManager
                 }
         */
         if (@$opt['proxy']) {
-            $proxies = [
-                '178.57.68.212:8085',
-                '5.62.155.250:8085',
-                '185.101.71.222:8085',
-                '79.110.31.126:8085',
-                '188.68.1.219:8085',
-            ];
-            $proxy = $proxies[array_rand($proxies)];
-            //curl_setopt($ch, CURLOPT_PROXYUSERPWD, 'MiniRUS218729:kYoj8PloCM');
+            $proxy = $opt['proxy'];
+            if ( isset($opt['proxy_user']) && isset($opt['proxy_pwd']) )
+            {
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, 'MiniRUS218729:kYoj8PloCM');
+            }
             curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
         curl_setopt($ch, CURLOPT_MAXREDIRS, 15);
@@ -272,12 +268,6 @@ class ParseItSourceManager
         */
         curl_close($ch);
 
-        // store ContentCache
-
-        if (@$opt['saveContentCache']) {
-            static::saveContentCache($data, $url, $opt);
-        }
-
         if (@$opt['json']) {
             $data = json_decode($data);
         }
@@ -290,6 +280,12 @@ class ParseItSourceManager
                     $data = ParseItSourceManager::load($url, $opt, $popitka+1);
                 }
             }
+        }
+
+        // store ContentCache
+
+        if (@$opt['saveContentCache']) {
+            static::saveContentCache($data, $url, $opt);
         }
 
         return $data;
