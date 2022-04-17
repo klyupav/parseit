@@ -153,7 +153,11 @@ class nokogiri
                 $array[$node->firstChild->nodeName] = $this->toArray($node->firstChild);
             }else{
                 foreach ($node->childNodes as $childNode){
-                    $array[$childNode->nodeName][] = $this->toArray($childNode);
+                    if (is_string($chNode)) {
+                        $array[$childNode->nodeName][] = [$chNode];
+                    } else {
+                        $array[$childNode->nodeName][] = $chNode;
+                    }
                 }
             }
         }
